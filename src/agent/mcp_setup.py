@@ -1,6 +1,8 @@
 # src/agent/mcp_setup.py
 import asyncio
+
 from langchain_mcp_adapters.client import MultiServerMCPClient
+
 from src.agent.configuration import CONFIG
 
 

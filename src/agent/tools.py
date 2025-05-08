@@ -1,26 +1,37 @@
 import re
 from datetime import datetime
-from typing import List, Dict, Any, Optional, Annotated
+from typing import Annotated, Any, Dict, List, Optional
 
 from langchain_core.tools import tool
 from langgraph.prebuilt import InjectedState
 
 from src.agent.external_api import crm_api
 from src.agent.models import (
-    ContactInfo, Document,
-    PreLead, Lead, EnrichedLead,
-    ValidationResult, RegisterLeadResult,
-    YesNo, PropertyType, ZoneOption,
-    AreaRange, BedroomsOption, BudgetOption,
-    TimeframeOption, PurposeOption, DocType
+    AreaRange,
+    BedroomsOption,
+    BudgetOption,
+    ContactInfo,
+    DocType,
+    Document,
+    EnrichedLead,
+    Lead,
+    PreLead,
+    PropertyType,
+    PurposeOption,
+    RegisterLeadResult,
+    TimeframeOption,
+    ValidationResult,
+    YesNo,
+    ZoneOption,
 )
 from src.agent.querys import (
-    build_query_units, build_query_project_detail,
-    build_query_units_by_project, build_query_project_images,
-    build_query_similar_units
+    build_query_project_detail,
+    build_query_project_images,
+    build_query_similar_units,
+    build_query_units,
+    build_query_units_by_project,
 )
 from src.agent.state import InmobiliaState
-
 
 # ——————————————————————————————————————————————————————
 # 1) VALIDACIONES COMUNES
@@ -49,8 +60,7 @@ def validate_customer_data(
         tipo_documento: Optional[str] = None,
         numero_documento: Optional[str] = None
 ) -> ValidationResult:
-    """
-    Valida los datos personales del cliente según reglas específicas.
+    """Valida los datos personales del cliente según reglas específicas.
 
     Args:
         state (InmobiliaState): Estado compartido inyectado.
@@ -96,8 +106,7 @@ def register_prelead(
         metraje: str,
         proyecto_id: str = "WEB001"
 ) -> RegisterLeadResult:
-    """
-    Registra un prelead con información básica de contacto y preferencias.
+    """Registra un prelead con información básica de contacto y preferencias.
 
     Un prelead es la primera etapa del pipeline de ventas, capturando datos
     mínimos necesarios para un seguimiento inicial.
@@ -165,8 +174,7 @@ def register_lead(
         tipo_documento: Optional[str] = None,
         numero_documento: Optional[str] = None
 ) -> RegisterLeadResult:
-    """
-    Actualiza un prelead existente a lead completo con datos adicionales.
+    """Actualiza un prelead existente a lead completo con datos adicionales.
 
     Un lead completo incluye información más detallada sobre preferencias
     y documentación necesaria para avanzar en el proceso de compra.
@@ -255,8 +263,7 @@ def enrich_lead(
         cuota_inicial: str,
         proposito: str
 ) -> RegisterLeadResult:
-    """
-    Enriquece un lead existente con información financiera y de intención.
+    """Enriquece un lead existente con información financiera y de intención.
 
     Esta etapa avanzada permite calificar mejor al lead, determinando
     su capacidad financiera y nivel de seriedad en la intención de compra.
@@ -374,8 +381,7 @@ def register_property_interest(
         property_id: str,
         interest_level: str = "alto"
 ) -> Dict[str, Any]:
-    """
-    Registra el interés del cliente en una propiedad específica.
+    """Registra el interés del cliente en una propiedad específica.
 
     Esta función permite trackear qué propiedades generan mayor interés
     y ayuda a priorizar leads en base a su comportamiento.
@@ -409,7 +415,7 @@ def register_property_interest(
 # ——————————————————————————————————————————————————————
 @tool("sql_query_units", parse_docstring=True)
 def sql_query_units(
-        state: Annotated[InmobiliaState, InjectedState],
+        state: Dict[str, Any],
         zona: Optional[str] = None,
         tipo_propiedad: Optional[str] = None,
         min_precio: Optional[float] = None,
@@ -417,14 +423,13 @@ def sql_query_units(
         habitaciones: Optional[int] = None,
         limit: int = 5
 ) -> List[Dict[str, Any]]:
-    """
-    Busca propiedades según criterios específicos consultando la base de datos.
+    """Busca propiedades según criterios específicos consultando la base de datos.
 
     Permite filtrar por zona, tipo, precio y habitaciones, ofreciendo
     resultados formateados listos para mostrar al usuario.
 
     Args:
-        state (InmobiliaState): Estado compartido inyectado.
+        state Dict[str, Any]: Estado compartido inyectado.
             Se actualizan `properties_shown`, `interaction_count` y `user_data`.
         zona (str, optional): Distrito o zona.
         tipo_propiedad (str, optional): "departamento", "casa", etc.
@@ -449,6 +454,7 @@ def sql_query_units(
 
     # Construir SQL y ejecutar
     import psycopg2.extras
+
     from src.agent.configuration import POSTGRES_URI
 
     sql = build_query_units(zona, tipo_propiedad, min_precio, max_precio, habitaciones, limit)
@@ -493,8 +499,7 @@ def query_project_detail(
         state: Annotated[InmobiliaState, InjectedState],
         project_id: int
 ) -> Dict[str, Any]:
-    """
-    Obtiene detalles completos de un proyecto inmobiliario específico.
+    """Obtiene detalles completos de un proyecto inmobiliario específico.
 
     Consulta toda la información relacionada con un proyecto en particular,
     incluyendo ubicación, inmobiliaria, características principales, etc.
@@ -508,6 +513,7 @@ def query_project_detail(
         Datos completos del proyecto solicitado
     """
     import psycopg2.extras
+
     from src.agent.configuration import POSTGRES_URI
 
     sql = build_query_project_detail(project_id)
@@ -535,8 +541,7 @@ def query_units_by_project(
         state: Annotated[InmobiliaState, InjectedState],
         project_id: int
 ) -> List[Dict[str, Any]]:
-    """
-    Lista todas las unidades disponibles en un proyecto específico.
+    """Lista todas las unidades disponibles en un proyecto específico.
 
     Permite explorar todas las opciones dentro de un mismo proyecto,
     facilitando la comparación entre diferentes unidades.
@@ -550,6 +555,7 @@ def query_units_by_project(
         Lista de unidades disponibles con sus características
     """
     import psycopg2.extras
+
     from src.agent.configuration import POSTGRES_URI
 
     sql = build_query_units_by_project(project_id)
@@ -589,8 +595,7 @@ def query_project_images(
         state: Annotated[InmobiliaState, InjectedState],
         project_id: int
 ) -> List[Dict[str, str]]:
-    """
-    Obtiene todas las imágenes disponibles de un proyecto.
+    """Obtiene todas las imágenes disponibles de un proyecto.
 
     Recupera las URLs de imágenes en diferentes resoluciones,
     permitiendo mostrar galerías visuales de los proyectos.
@@ -604,6 +609,7 @@ def query_project_images(
         Lista de imágenes con tipo y URL
     """
     import psycopg2.extras
+
     from src.agent.configuration import POSTGRES_URI
 
     sql = build_query_project_images(project_id)
@@ -632,8 +638,7 @@ def query_similar_units(
         unit_id: int,
         max_results: int = 3
 ) -> List[Dict[str, Any]]:
-    """
-    Encuentra unidades similares a una unidad específica.
+    """Encuentra unidades similares a una unidad específica.
 
     Busca propiedades con características y precio similares,
     facilitando la comparación y ofreciendo alternativas al cliente.
@@ -648,6 +653,7 @@ def query_similar_units(
         Lista de unidades similares a la de referencia
     """
     import psycopg2.extras
+
     from src.agent.configuration import POSTGRES_URI
 
     sql = build_query_similar_units(unit_id, max_results)

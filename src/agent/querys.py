@@ -8,8 +8,7 @@ def build_query_units(
         habitaciones: int | None = None,
         limit: int = 5
 ) -> str:
-    """
-    Busca hasta `limit` unidades que cumplan los criterios.
+    """Busca hasta `limit` unidades que cumplan los criterios.
     """
     filters: list[str] = []
     if zona:

@@ -1,12 +1,16 @@
 from datetime import date
 from enum import Enum
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
 
 from pydantic import (
-    BaseModel, Field, EmailStr, HttpUrl,
-    field_validator, model_validator, ConfigDict
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    HttpUrl,
+    field_validator,
+    model_validator,
 )
-
 
 # ===========================
 # 1) ENUMS
@@ -26,22 +30,22 @@ class PropertyType(str, Enum):
 
 
 class ZoneOption(str, Enum):
-    LIMA_TOP = "1";
-    LIMA_MODERNA = "2";
+    LIMA_TOP = "1"
+    LIMA_MODERNA = "2"
     LIMA_CENTRO = "3"
-    LIMA_SUR = "4";
-    LIMA_NORTE = "5";
+    LIMA_SUR = "4"
+    LIMA_NORTE = "5"
     LIMA_ESTE = "6"
-    CALLAO = "7";
+    CALLAO = "7"
     FUERA_LIMA = "8"
 
 
 class AreaRange(str, Enum):
-    MENOS_40 = "1";
-    DE_41_A_70 = "2";
+    MENOS_40 = "1"
+    DE_41_A_70 = "2"
     DE_71_A_90 = "3"
-    DE_91_A_110 = "4";
-    DE_111_A_130 = "5";
+    DE_91_A_110 = "4"
+    DE_111_A_130 = "5"
     MAS_130 = "6"
 
 
@@ -52,26 +56,26 @@ class DocType(str, Enum):
 
 
 class BedroomsOption(str, Enum):
-    UNO = "1";
-    DOS = "2";
-    TRES = "3";
-    CUATRO = "4";
+    UNO = "1"
+    DOS = "2"
+    TRES = "3"
+    CUATRO = "4"
     CINCO_MAS = "5"
 
 
 class BudgetOption(str, Enum):
-    MENOS_350K = "1";
-    ENTRE_350K_500K = "2";
+    MENOS_350K = "1"
+    ENTRE_350K_500K = "2"
     ENTRE_500K_650K = "3"
-    ENTRE_650K_800K = "4";
-    ENTRE_800K_1M = "5";
+    ENTRE_650K_800K = "4"
+    ENTRE_800K_1M = "5"
     MAS_1M = "6"
 
 
 class TimeframeOption(str, Enum):
-    HASTA_3_MESES = "1";
+    HASTA_3_MESES = "1"
     HASTA_6_MESES = "2"
-    HASTA_12_MESES = "3";
+    HASTA_12_MESES = "3"
     MAS_12_MESES = "4"
 
 
@@ -163,19 +167,19 @@ class ProyectoTipo(str, Enum):
 
 
 class TipologiaTipo(str, Enum):
-    FLAT = "flat";
-    DUPLEX = "duplex";
+    FLAT = "flat"
+    DUPLEX = "duplex"
     TRIPLEX = "triplex"
-    PENTHOUSE = "penthouse";
+    PENTHOUSE = "penthouse"
     STUDIO = "studio"
 
 
 class UnidadVista(str, Enum):
-    INTERIOR = "interior";
-    EXTERIOR = "exterior";
+    INTERIOR = "interior"
+    EXTERIOR = "exterior"
     CALLE = "calle"
-    PARQUE = "parque";
-    CIUDAD = "ciudad";
+    PARQUE = "parque"
+    CIUDAD = "ciudad"
     MAR = "mar"
 
 

@@ -1,15 +1,20 @@
+"""Guardrails para agentes inmobiliarios con manejo consistente del estado.
 """
-Guardrails para agentes inmobiliarios con manejo consistente del estado.
-"""
-import re
 import json
-from typing import Dict, Any, List, Optional, Pattern
+import re
 from functools import lru_cache
+from typing import Any, Dict, List, Pattern
 
-from langgraph.graph import StateGraph, END
+from langgraph.graph import END, StateGraph
 
-from src.agent.models import RelevanceOutput, ConsentVerificationOutput, SecurityCheckOutput, PIIDetectionOutput
-from src.agent.configuration import get_model, ModelType
+from src.agent.configuration import ModelType, get_model
+from src.agent.models import (
+    ConsentVerificationOutput,
+    PIIDetectionOutput,
+    RelevanceOutput,
+    SecurityCheckOutput,
+)
+
 
 # Funciones de utilidad optimizadas
 @lru_cache(maxsize=20)

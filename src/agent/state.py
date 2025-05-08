@@ -1,9 +1,9 @@
 # src/agent/state.py - Solución con inicialización correcta
-from typing import Dict, List, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, List
 
 from langgraph.prebuilt.chat_agent_executor import AgentState
-from pydantic import Field, model_validator, BaseModel
+from pydantic import Field
 
 
 class InmobiliaState(AgentState):

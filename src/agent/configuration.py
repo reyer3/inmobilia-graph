@@ -1,6 +1,7 @@
 import os
 from enum import Enum
-from typing import Dict, Any
+from typing import Any, Dict
+
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 

@@ -1,5 +1,4 @@
-"""
-Inicialización del paquete agent.
+"""Inicialización del paquete agent.
 Exporta el grafo principal para uso con LangGraph.
 """
 

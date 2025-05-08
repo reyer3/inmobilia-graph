@@ -1,24 +1,16 @@
-"""
-memory_setup.py
+# src/agent/memory_setup.py
+import os
 
-Define los backends de memoria para LangGraph:
-- Short-term memory (thread-level): InMemorySaver (o persistente en producción).
-- Long-term memory (cross-thread): InMemoryStore (o persistente en producción).
+from langgraph.checkpoint.postgres import PostgresSaver
+from langgraph.store.postgres import PostgresStore
 
-Ambos son inyectados en los agentes con create_react_agent.
-"""
+# Obtener la URI de PostgreSQL
+POSTGRES_URI = os.getenv("POSTGRES_URI")
+if not POSTGRES_URI:
+    raise ValueError("POSTGRES_URI es obligatoria")
 
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.store.memory import InMemoryStore
+# SHORT-TERM MEMORY: checkpointer
+checkpointer = PostgresSaver(conn=POSTGRES_URI)
 
-# SHORT-TERM MEMORY: guarda el historial de la sesión (thread)
-checkpointer = InMemorySaver()
-
-# LONG-TERM MEMORY: guarda datos de usuario o app entre sesiones
-store = InMemoryStore()
-
-# Para producción, podrías sustituir por SQLite, Redis, etc.
-# from langgraph.checkpoint.sqlite import SqliteSaver
-# from langgraph.store.sqlite import SqliteStore
-# checkpointer = SqliteSaver(db_file="data/inmobilia_checkpoints.db")
-# store = SqliteStore(db_file="data/inmobilia_store.db")
+# LONG-TERM MEMORY: store entre sesiones
+store = PostgresStore(conn=POSTGRES_URI)

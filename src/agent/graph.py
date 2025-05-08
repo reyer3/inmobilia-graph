@@ -1,25 +1,30 @@
 # src/agent/graph.py
 
-from langchain_core.messages.utils import trim_messages, count_tokens_approximately
+from langchain_core.globals import set_debug, set_verbose
+from langchain_core.messages.utils import count_tokens_approximately, trim_messages
 from langgraph.constants import START
-from langgraph.graph import StateGraph, END
+from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import create_react_agent
 
-from src.agent.configuration import get_model, ModelType
+from src.agent.configuration import ModelType, get_model
 from src.agent.guardrails import add_guardrails_to_graph
 from src.agent.memory_setup import checkpointer, store
-from src.agent.prompts import FILTRADO_PROMPT, CAPTURA_PROMPT, SUPERVISOR_PROMPT
+from src.agent.prompts import CAPTURA_PROMPT, FILTRADO_PROMPT, SUPERVISOR_PROMPT
 from src.agent.state import InmobiliaState
 from src.agent.tools import (
-    # Herramientas de validación y CRM
-    validate_customer_data, register_prelead, register_lead, enrich_lead,
+    enrich_lead,
+    query_project_detail,
+    query_project_images,
+    query_similar_units,
+    query_units_by_project,
+    register_lead,
+    register_prelead,
     register_property_interest,
-
     # Herramientas de consulta de propiedades
-    sql_query_units, query_project_detail, query_units_by_project,
-    query_project_images, query_similar_units
+    sql_query_units,
+    # Herramientas de validación y CRM
+    validate_customer_data,
 )
-from langchain_core.globals import set_debug, set_verbose
 
 set_debug(True)
 set_verbose(False)
@@ -115,13 +120,16 @@ workflow = add_guardrails_to_graph(workflow)
 workflow.add_node("agent_supervisor", supervisor_agent)
 # Conecta guardrails → supervisor → siguiente guardrail → ...
 # Agregar conexión desde START al primer guardrail
-workflow.add_edge(START, "relevance_check")  # Esta línea faltaba
+workflow.add_edge(START, "relevance_check")
 workflow.add_edge("consent_check", "agent_supervisor")
 workflow.add_edge("agent_supervisor", "pii_check")
 workflow.add_edge("generate_guardrail_response", END)
 
-# 5) Compilar y exponer
+# 5) Compilar el grafo
 graph = workflow.compile()
-result = graph.invoke(create_initial_state())
 
-__all__ = ["graph"]
+# Eliminar la invocación directa para que no se ejecute durante la importación
+# result = graph.invoke(create_initial_state())  <- Esta línea se elimina
+
+# Exportar componentes necesarios
+__all__ = ["graph", "workflow", "create_initial_state"]
